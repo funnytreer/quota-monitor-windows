@@ -8,6 +8,7 @@ TestResults/
 
 # 本机实测记录、运行数据和登录资料
 /docs/验收/
+/额度监控器-外观与提醒设计稿.png
 GrokWebView/
 *.WebView2/
 settings.json

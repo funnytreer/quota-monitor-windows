@@ -116,15 +116,13 @@ public class SourceTests
     }
 
     [Fact]
-    public void WebPeriodsPreserveResetTextAndDoNotCollideWithAntigravity()
+    public void GrokWeeklyBucketPreservesItsResetAndConnectionState()
     {
         var now = DateTimeOffset.UtcNow;
-        var website = new Quota(Service.Gemini, 42, null, 300, ResetText: "明天 14:00") { LastSuccessAt = now };
-        var bucket = QuotaBucket.FromQuota(website, 300);
-        Assert.Equal(("gemini.5h", "明天 14:00", now), (bucket.BucketKey, bucket.ResetText, bucket.LastSuccessAt));
-        Assert.Equal("gemini.7d", QuotaBucket.FromQuota(website, 10080).BucketKey);
-        Assert.Equal("grok.7d", QuotaBucket.FromQuota(new(Service.Grok, 80, null), 10080).BucketKey);
-        Assert.Equal(ServiceConnectionState.Unavailable, ServiceSnapshot.Create(ServiceKind.GeminiWeb, true, "读取失败", [bucket]).State);
-        Assert.Equal(ServiceConnectionState.Connected, ServiceSnapshot.Create(ServiceKind.GeminiWeb, true, null, [bucket]).State);
+        var reset = now.AddDays(2);
+        var bucket = QuotaBucket.FromQuota(new Quota(Service.Grok, 42, reset, 10080) { LastSuccessAt = now }, 10080);
+        Assert.Equal(("grok.7d", reset, now), (bucket.BucketKey, bucket.ResetsAt, bucket.LastSuccessAt));
+        Assert.Equal(ServiceConnectionState.Unavailable, ServiceSnapshot.Create(ServiceKind.Grok, true, "读取失败", [bucket]).State);
+        Assert.Equal(ServiceConnectionState.Connected, ServiceSnapshot.Create(ServiceKind.Grok, true, null, [bucket]).State);
     }
 }

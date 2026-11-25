@@ -442,8 +442,7 @@ internal sealed class WidgetWindow : GlassWindow
         var description = quota.Remaining is int remaining
             ? $"剩余 {remaining}%{(low ? "，额度偏低" : "")}"
             : quota.Status ?? "暂未读取";
-        var scope = quota.Scope ?? (quota.Service == Service.Gemini ? quota.WindowLabel : null);
-        if (scope is not null)
+        if (quota.Scope is string scope)
             description = $"{scope}，{description}";
         if (quota.ResetsAt.HasValue || !string.IsNullOrWhiteSpace(quota.ResetText))
             description += $"，{CountdownFormatter.Format(quota.ResetsAt, DateTimeOffset.Now, quota.ResetText)}";

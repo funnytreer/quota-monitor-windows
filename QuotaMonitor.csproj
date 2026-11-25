@@ -3,7 +3,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
     <SupportedOSPlatformVersion>10.0.10240.0</SupportedOSPlatformVersion>
-    <!-- Preserve the launcher path used by desktop shortcuts, startup and the Chrome native host. -->
+    <!-- Preserve the launcher path used by desktop shortcuts and startup. -->
     <BaseOutputPath Condition="'$(BaseOutputPath)' == ''">bin\</BaseOutputPath>
     <OutputPath>$(BaseOutputPath)$(Configuration)\net8.0-windows\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

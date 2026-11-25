@@ -11,7 +11,7 @@ public class AlertEngineTests
     private static ServiceSnapshot Sample(string key, DateTimeOffset time, int value, DateTimeOffset? reset = null, string? resetText = null)
     {
         var kind = key.Split('.')[0] switch { "chatgpt" => ServiceKind.ChatGPT, "ag" => ServiceKind.Antigravity,
-            "grok" => ServiceKind.Grok, _ => ServiceKind.GeminiWeb };
+            "grok" => ServiceKind.Grok, _ => throw new ArgumentOutOfRangeException(nameof(key)) };
         var b = new QuotaBucket(key, kind, key, key, "每周", value, reset, 10080, resetText, LastSuccessAt: time);
         return ServiceSnapshot.Create(kind, true, null, [b]);
     }
@@ -30,8 +30,8 @@ public class AlertEngineTests
     [InlineData("ag.gemini.7d")]
     [InlineData("ag.gemini-4-argon.7d")]
     [InlineData("grok.7d")]
-    [InlineData("gemini.5h")]
-    [InlineData("gemini.7d")]
+    [InlineData("ag.gemini.5h")]
+    [InlineData("ag.claude.7d")]
     public void EveryServiceAndWindowHasIndependentThresholdAndCooldown(string key)
     {
         _p.PerBucketLowThresholds[key] = 40;

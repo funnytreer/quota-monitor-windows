@@ -21,7 +21,7 @@ internal static class TrayIconRenderer
         int? minimum = null;
         var badge = QuotaHealth.Unknown;
         var parts = new List<string>();
-        foreach (var service in services.Where(s => s.Service.IsMonitored() && s.State == ServiceConnectionState.Connected))
+        foreach (var service in services.Where(s => s.State == ServiceConnectionState.Connected))
         {
             QuotaBucket? lowest = null;
             foreach (var b in service.Buckets)

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace QuotaMonitor;
 
-internal enum ServiceKind { ChatGPT, Antigravity, Grok, GeminiWeb }
+internal enum ServiceKind { ChatGPT, Antigravity, Grok }
 internal enum ServiceConnectionState { NotConfigured, Connecting, Connected, LoginRequired, Unavailable }
 
 internal sealed record QuotaBucket(string BucketKey, ServiceKind Service, string ShortName, string DisplayName,
@@ -19,7 +19,6 @@ internal sealed record QuotaBucket(string BucketKey, ServiceKind Service, string
         {
             QuotaMonitor.Service.ChatGPT => (ServiceKind.ChatGPT, "chatgpt", "ChatGPT", "ChatGPT"),
             QuotaMonitor.Service.Grok => (ServiceKind.Grok, "grok", "Grok", "Grok"),
-            QuotaMonitor.Service.Gemini => (ServiceKind.GeminiWeb, "gemini", "Gemini 网页", "Gemini 网页版"),
             _ => throw new ArgumentOutOfRangeException(nameof(quota))
         };
         var (key, suffix, window) = minutes switch
@@ -45,7 +44,7 @@ internal sealed record ServiceSnapshot(ServiceKind Service, ServiceConnectionSta
         var last = buckets.Select(b => b.LastSuccessAt).Append(resets?.LastSuccessAt).Max();
         var state = !configured ? ServiceConnectionState.NotConfigured
             : loginRequired ? ServiceConnectionState.LoginRequired
-            : status is "正在读取" or "正在读取…" or "等待 Chrome 连接" ? ServiceConnectionState.Connecting
+            : status is "正在读取" or "正在读取…" ? ServiceConnectionState.Connecting
             : string.IsNullOrEmpty(status) && last.HasValue ? ServiceConnectionState.Connected
             : ServiceConnectionState.Unavailable;
         string message = state switch

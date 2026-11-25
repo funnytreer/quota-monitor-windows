@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace QuotaMonitor;
 
-internal enum Service { ChatGPT, Grok, Gemini, Antigravity }
+internal enum Service { ChatGPT, Grok, Antigravity = 3 }
 internal enum WidgetItem { Work, Grok, AntigravityGemini, AntigravityClaude }
 
 internal sealed record Quota(Service Service, int? Remaining, DateTimeOffset? ResetsAt, int? WindowMinutes = null,
@@ -30,25 +29,11 @@ internal sealed record Quota(Service Service, int? Remaining, DateTimeOffset? Re
         return local.ToString(local.Date == DateTime.Today ? "HH:mm" : "M/d HH:mm");
     }
 
-    public string Name => DisplayName ?? (Service switch
-    {
-        Service.ChatGPT => nameof(Service.ChatGPT),
-        Service.Grok => "Grok",
-        Service.Antigravity => "Antigravity",
-        _ => "Gemini"
-    });
-    public string WindowLabel => (Service, WindowMinutes) switch
-    {
-        (Service.Grok, 10080) => "共享周额度",
-        (_, 10080) => "周额度",
-        (_, 300) => "5 小时额度",
-        _ => "额度"
-    };
+    public string Name => DisplayName ?? Service.ToString();
 }
 
 internal sealed record QuotaReading(DateTimeOffset? UpdatedAt, IReadOnlyList<ServiceSnapshot> Services)
 {
-    public IReadOnlyList<ServiceSnapshot> Services { get; } = Services.Where(s => s.Service.IsMonitored()).ToArray();
     public bool HasCompletedCheck { get; init; }
     public string CheckTimeText => UpdatedAt is DateTimeOffset time ? $"检查于 {Quota.LocalTime(time)}"
         : HasCompletedCheck ? "尚无成功读数" : "正在检查…";

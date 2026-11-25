@@ -1,6 +1,6 @@
 # 《额度监控器（QuotaMonitor）》界面与功能重设计规格说明书
 
-> **文档用途**：本规格书作为《额度监控器（QuotaMonitor）》重设计改造的唯一权威设计与工程契约，供后续开发代理（如 ChatGPT Astra 6.2）按阶段落地执行。所有色值、尺寸、数据契约与底层护栏均已锁定，执行时不得自行删改核心约束。
+> 本文记录界面重设计时的规格和原型。当前服务范围见[项目首页](../README.md)。旧版 Gemini 网页扩展、连接向导与本地桥接已退役。
 
 ---
 
@@ -32,7 +32,7 @@
 > **核心原则**：以下文件中涉及的系统互操作、协议握手、注册表键、Profile 路径与防误触机制经过实机验证，**只允许增量适配，严禁破坏性重写**。
 
 ### 2.1 启动与单实例 (`App.xaml.cs`)
-- `OnStartup` 最顶部**必须**保留 `GeminiConnection.IsHostLaunch(e.Args)` 判断：检测到 `chrome-extension://` 启动参数时，直接执行 `await GeminiConnection.RunHostAsync(e.Args[0])` 并调用 `Shutdown()` 返回，绝不创建托盘图标、不触发单实例激活锁。
+- 遇到旧版 Chrome 扩展传入的 `chrome-extension://` 启动参数，程序在创建托盘和激活已有实例之前退出。
 - 保留 `EventWaitHandle` 命名事件 `Local\QuotaMonitor.Activate`，二次启动时唤醒已有小组件并退出。
 
 ### 2.2 Codex 数据源 (`CodexResets.cs` / `CodexAccountSource`)

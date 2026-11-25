@@ -17,8 +17,8 @@ public class DesktopItemTests
             new("Claude and GPT models", [new("每周", 9, now.AddDays(2), Window: "weekly")]),
             new("Gemini 4 Argon", [new("每周", 100, now.AddDays(5), Window: "weekly")])]) { LastSuccessAt = now };
         var services = Enum.GetValues<ServiceKind>().Select(kind =>
-                ServiceSnapshot.Create(kind, kind != ServiceKind.GeminiWeb, null, kind == ServiceKind.Antigravity
-                    ? models.ToBuckets() : catalog.Where(b => b.Service == kind && kind != ServiceKind.GeminiWeb).ToArray(),
+                ServiceSnapshot.Create(kind, true, null, kind == ServiceKind.Antigravity
+                    ? models.ToBuckets() : catalog.Where(b => b.Service == kind).ToArray(),
                     resets: kind == ServiceKind.ChatGPT ? new(2, [now.AddDays(1), now.AddDays(3)], "") : null)).ToArray();
         return new QuotaReading(now, services);
     }
@@ -38,15 +38,11 @@ public class DesktopItemTests
     }
 
     [Fact]
-    public void OldWebReadingAndSavedSelectionCannotRestoreTheDesktopItem()
+    public void LegacyWebSelectionDoesNotCreateADesktopItem()
     {
         var p = new Preferences();
         p.WidgetBucketOrder.Insert(0, "gemini.5h");
-        var bucket = QuotaBucket.FromQuota(new Quota(Service.Gemini, 86, null) { LastSuccessAt = DateTimeOffset.Now }, 300);
-        var web = ServiceSnapshot.Create(ServiceKind.GeminiWeb, true, null, [bucket]);
-        var reading = new QuotaReading(DateTimeOffset.Now, [web, .. Sample().Services]);
-        Assert.DoesNotContain(reading.Services, s => s.Service == ServiceKind.GeminiWeb);
-        Assert.Equal(new[] { "ChatGPT", "Gemini", "Claude", "Grok" }, DesktopItems.Select(reading, p).Select(q => q.Name));
+        Assert.Equal(new[] { "ChatGPT", "Gemini", "Claude", "Grok" }, DesktopItems.Select(Sample(), p).Select(q => q.Name));
     }
 
     [Theory]

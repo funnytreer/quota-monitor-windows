@@ -33,7 +33,7 @@ internal static class ServiceMark
         var geometry = (service, bucketKey) switch
         {
             (Service.Antigravity, "ag.claude.7d") => Claude,
-            (Service.Antigravity, "ag.gemini.7d") or (Service.Gemini, _) => Gemini,
+            (Service.Antigravity, "ag.gemini.7d") => Gemini,
             (Service.Antigravity, _) => Antigravity,
             (Service.ChatGPT, _) => OpenAI,
             (Service.Grok, _) => Grok,

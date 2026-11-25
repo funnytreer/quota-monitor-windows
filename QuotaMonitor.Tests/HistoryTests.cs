@@ -41,11 +41,11 @@ public sealed class HistoryTests : IDisposable
         {
             store.Observe([Sample(now,88)]);
             now = now.AddHours(25);
-            store.Observe([Sample(now,71) with { BucketKey = "gemini.7d" }]);
+            store.Observe([Sample(now,71) with { BucketKey = "ag.gemini.7d", Service = ServiceKind.Antigravity }]);
         }
         using var json = JsonDocument.Parse(File.ReadAllText(FilePath));
         Assert.False(json.RootElement.TryGetProperty("chatgpt.5h", out _));
-        Assert.True(json.RootElement.TryGetProperty("gemini.7d", out _));
+        Assert.True(json.RootElement.TryGetProperty("ag.gemini.7d", out _));
     }
 
     [Fact]

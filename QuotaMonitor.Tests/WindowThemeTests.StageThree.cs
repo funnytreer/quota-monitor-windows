@@ -12,7 +12,6 @@ public partial class WindowThemeTests
     private static void CheckConnectionGuides(ThemeManager theme)
     {
         bool changed = false;
-        var gemini = new GeminiWizardWindow(new GeminiConnection(), false, _ => changed = true);
         var ag = new AntigravityGuideWindow(() => Task.CompletedTask);
         var grok = new GrokConnectionWindow(new GrokWebClient(), true, _ => changed = true);
         ag.Present(new AntigravityReading([new("Gemini Models", [])]));
@@ -28,23 +27,19 @@ public partial class WindowThemeTests
         foreach (var mode in new[] { ThemePreference.Dark, ThemePreference.Light })
         {
             theme.Apply(mode);
-            Layout(gemini, gemini.Width, 580);
             Layout(ag, ag.Width, 400);
             Layout(grok, 880, 680);
-            if (mode == ThemePreference.Light) Capture((FrameworkElement)gemini.Content, "gemini", "QUOTA_GUIDE_PREVIEW_DIR");
             if (mode == ThemePreference.Dark) Capture((FrameworkElement)ag.Content, "antigravity", "QUOTA_GUIDE_PREVIEW_DIR");
-            Assert.True(HasButton(gemini, "注册并复制扩展目录") && HasButton(gemini, "复制 chrome://extensions"));
             Assert.True(HasButton(ag, "立即重新检测") && HasButton(ag, "复制登录命令"));
             Assert.True(HasButton(grok, "读取并开始监测") && HasButton(grok, "断开并清除登录"));
             Assert.Equal(theme.Color("Surface.Window"), ((SolidColorBrush)grok.Background).Color);
         }
-        foreach (Window window in new Window[] { ag, grok, gemini })
+        foreach (Window window in new Window[] { ag, grok })
         {
             Assert.False(window.AllowsTransparency);
             Assert.NotNull(System.Windows.Shell.WindowChrome.GetWindowChrome(window));
         }
         Assert.False(changed);
-        gemini.Close();
         ag.Close();
         grok.Close();
 

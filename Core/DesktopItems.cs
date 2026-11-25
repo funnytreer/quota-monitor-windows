@@ -15,18 +15,16 @@ internal static class DesktopItems
         QuotaBucket.FromQuota(new(Service.Grok, null, null), 10080)
     ];
 
-    public static bool IsMonitored(this ServiceKind service) => service != ServiceKind.GeminiWeb;
-
     public static Service Icon(this ServiceKind service) => service switch
     {
         ServiceKind.ChatGPT => Service.ChatGPT, ServiceKind.Grok => Service.Grok,
-        ServiceKind.Antigravity => Service.Antigravity, _ => Service.Gemini
+        ServiceKind.Antigravity => Service.Antigravity, _ => throw new ArgumentOutOfRangeException(nameof(service))
     };
 
     public static string Title(this ServiceKind service) => service switch
     {
         ServiceKind.ChatGPT => "ChatGPT / Codex", ServiceKind.Grok => "Grok",
-        ServiceKind.Antigravity => "Antigravity", _ => "Gemini 网页版"
+        ServiceKind.Antigravity => "Antigravity", _ => throw new ArgumentOutOfRangeException(nameof(service))
     };
 
     public static List<Quota> Select(QuotaReading reading, Preferences prefs)

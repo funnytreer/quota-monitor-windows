@@ -53,18 +53,15 @@ public class TrayAndNotificationTests
     }
 
     [Fact]
-    public void GeminiWebDoesNotAffectTheTrayEvenWhenConnected()
+    public void AntigravityGeminiContributesToTraySummary()
     {
         var now = DateTimeOffset.Now;
         var gemini = DesktopItems.Catalog.Single(b => b.BucketKey == "ag.gemini.7d") with { Remaining = 72, LastSuccessAt = now };
-        var web = QuotaBucket.FromQuota(new Quota(Service.Gemini, 1, null) { LastSuccessAt = now }, 10080);
         var ag = ServiceSnapshot.Create(gemini.Service, true, null, [gemini]);
-        var browser = ServiceSnapshot.Create(web.Service, true, null, [web]);
-        var summary = TrayIconRenderer.Summarize([ag, browser], new());
+        var summary = TrayIconRenderer.Summarize([ag], new());
         Assert.Equal(72, summary.Minimum);
         Assert.Equal(QuotaHealth.Normal, summary.Badge);
         Assert.Equal($"{gemini.ShortName} 72%", summary.Tooltip);
-        Assert.Equal(TrayIconRenderer.Summarize([], new()), TrayIconRenderer.Summarize([browser], new()));
     }
 
     [Fact]
