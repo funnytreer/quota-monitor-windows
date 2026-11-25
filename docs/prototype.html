@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>额度监控器 · v2 视觉优化交互原型</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    .tabular, .mono { font-variant-numeric: tabular-nums; }
+    .mono { font-family: "Cascadia Mono", Consolas, monospace; }
+    .glass-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+    .glass-scroll::-webkit-scrollbar-thumb { background: rgba(128,140,160,0.35); border-radius: 99px; }
+    input[type="range"] { cursor: pointer; }
+    .starry-bg {
+      background:
+        radial-gradient(1.5px 1.5px at 14% 22%, rgba(255,255,255,0.85), transparent),
+        radial-gradient(1px 1px at 32% 68%, rgba(255,255,255,0.7), transparent),
+        radial-gradient(1.5px 1.5px at 56% 18%, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 78% 42%, rgba(255,255,255,0.75), transparent),
+        radial-gradient(2px 2px at 88% 24%, rgba(186,230,253,0.95), transparent),
+        radial-gradient(1px 1px at 24% 84%, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1.5px 1.5px at 66% 76%, rgba(255,255,255,0.7), transparent),
+        radial-gradient(circle at 75% 20%, rgba(56,189,248,0.22) 0%, transparent 40%),
+        linear-gradient(160deg, #123e88 0%, #1d57b2 55%, #164493 100%);
+    }
+  </style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased p-4 md:p-6">
+  <div class="max-w-6xl mx-auto space-y-4">
+    <!-- Top Workbench Bar -->
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-[var(--primary)]/15 text-[var(--primary)] flex items-center justify-center font-bold text-sm">QM</div>
+        <div>
+          <div class="text-sm font-semibold">额度监控器 · v2 视觉优化原型（无贴片 · 无悬停按钮 · Fluent 2 设置）</div>
+          <div class="text-xs text-[var(--muted-foreground)]">小组件纯粹展示与拖拽，所有设置与控制统一从底部托盘图标进入</div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <div class="inline-flex rounded-lg border border-[var(--border)] p-0.5 bg-[var(--background)] text-xs" id="viewTabs">
+          <button data-view="trio" class="px-3 py-1.5 rounded-md font-medium transition">三形态高透明全景对比</button>
+          <button data-view="settings" class="px-3 py-1.5 rounded-md font-medium transition">统一配置中心 (640×500)</button>
+          <button data-view="popover" class="px-3 py-1.5 rounded-md font-medium transition">托盘控制中心 + 向导</button>
+        </div>
+
+        <select id="wallpaperSelect" class="text-xs rounded-lg border border-[var(--border)] bg-[var(--background)] px-2.5 py-1.5">
+          <option value="starry">壁纸：星空深蓝</option>
+          <option value="dark">壁纸：深色流体</option>
+          <option value="light">壁纸：浅雾蓝</option>
+          <option value="white">壁纸：纯白文档</option>
+        </select>
+
+        <select id="themeSelect" class="text-xs rounded-lg border border-[var(--border)] bg-[var(--background)] px-2.5 py-1.5">
+          <option value="System">主题：跟随系统</option>
+          <option value="Light">主题：浅色 (Frost)</option>
+          <option value="Dark">主题：深色 (Obsidian)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Live Simulator Bar -->
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl px-4 py-2.5 flex flex-wrap items-center gap-4 text-xs">
+      <label class="flex items-center gap-2">
+        <span class="font-medium">透明度:</span>
+        <input id="simAlpha" type="range" min="0" max="100" value="65" class="w-28 accent-[var(--primary)]" />
+        <span id="simAlphaVal" class="mono w-9 text-right font-semibold">65%</span>
+      </label>
+      <label class="flex items-center gap-2">
+        <span>材质:</span>
+        <select id="simSurface" class="rounded border border-[var(--border)] bg-[var(--background)] px-2 py-1">
+          <option value="Themed">主题默认</option>
+          <option value="HudGlass">无界通透</option>
+          <option value="CustomColor">自定义色</option>
+        </select>
+      </label>
+      <label class="flex items-center gap-2">
+        <span>高透明文字:</span>
+        <select id="simInk" class="rounded border border-[var(--border)] bg-[var(--background)] px-2 py-1">
+          <option value="Auto">自动</option>
+          <option value="Light">亮白 + 暗影</option>
+          <option value="Dark">深墨 + 浅晕</option>
+        </select>
+      </label>
+      <label class="flex items-center gap-2">
+        <span>AG·Claude:</span>
+        <input id="simClaude" type="range" min="0" max="100" value="100" class="w-24 accent-[var(--primary)]" />
+        <span id="simClaudeVal" class="mono w-10 text-right font-semibold">100%</span>
+      </label>
+      <span class="ml-auto text-[11px] text-[var(--muted-foreground)]">提示：鼠标移入小组件不会弹出任何按钮，点击右下角托盘图标打开控制中心/设置</span>
+    </div>
+
+    <!-- Stage -->
+    <div id="stageRoot" class="relative rounded-2xl overflow-hidden border border-[var(--border)] shadow-lg min-h-[600px] flex flex-col justify-between transition-all duration-300">
+      <div id="toastBanner" class="hidden absolute top-4 right-4 z-50 w-80 rounded-xl border shadow-2xl p-3 text-xs"></div>
+
+      <!-- VIEW 1: TRIO SHOWCASE -->
+      <div id="viewTrio" class="flex-1 p-6 md:p-8 flex flex-col items-center justify-center gap-8">
+        <div class="w-full max-w-4xl flex flex-wrap items-start justify-center gap-8">
+          <div class="space-y-2">
+            <div class="text-[11px] font-medium text-white/80 drop-shadow text-center">进度条模式（无贴片 · 无悬停遮挡）</div>
+            <div id="widgetBarsSlot"></div>
+          </div>
+          <div class="space-y-2">
+            <div class="text-[11px] font-medium text-white/80 drop-shadow text-center">空心圆环 2×2（无实心白底 · 标签居下）</div>
+            <div id="widgetRingsSlot"></div>
+          </div>
+        </div>
+        <div class="space-y-2 flex flex-col items-center">
+          <div class="text-[11px] font-medium text-white/80 drop-shadow">迷你胶囊（单层磨砂 · 细竖线分隔 · G/C 区分标记 · 无缩放斜杠）</div>
+          <div id="widgetPillSlot"></div>
+        </div>
+      </div>
+
+      <!-- VIEW 2: SETTINGS CONTROL CENTER (640x500) -->
+      <div id="viewSettings" class="hidden flex-1 p-6 items-center justify-center">
+        <div id="settingsWindow" class="w-full max-w-[656px] h-[500px] rounded-xl border shadow-2xl overflow-hidden flex flex-col"></div>
+      </div>
+
+      <!-- VIEW 3: POPOVER & WIZARDS -->
+      <div id="viewPopover" class="hidden flex-1 p-6 items-center justify-center gap-6 flex-wrap">
+        <div id="dashboardPopover" class="w-full max-w-[340px] rounded-xl border shadow-2xl overflow-hidden flex flex-col max-h-[500px]"></div>
+        <div id="geminiWizardCard" class="w-full max-w-[360px] rounded-xl border shadow-2xl p-4 space-y-3"></div>
+      </div>
+
+      <!-- Simulated Taskbar -->
+      <div id="simTaskbar" class="h-11 px-4 border-t flex items-center justify-between text-xs backdrop-blur-xl">
+        <div class="flex items-center gap-3">
+          <div class="w-5 h-5 rounded bg-sky-500/90 flex items-center justify-center text-white text-[10px] font-bold">⊞</div>
+          <span class="opacity-70 text-[11px]">Windows 11 任务栏（唯一设置/控制入口）</span>
+        </div>
+        <div class="flex items-center gap-3 relative">
+          <div class="relative">
+            <button id="trayIconBtn" class="w-8 h-8 rounded-md flex items-center justify-center hover:bg-white/15 transition" title="点击打开托盘菜单 / 控制中心"></button>
+            <div id="trayMenuPopup" class="hidden absolute bottom-11 right-0 w-44 rounded-xl border shadow-2xl py-1.5 text-xs z-50">
+              <button data-tray="popover" class="w-full text-left px-3 py-1.5 hover:bg-sky-500/15">额度控制中心</button>
+              <button data-tray="settings" class="w-full text-left px-3 py-1.5 hover:bg-sky-500/15">小组件设置…</button>
+              <button data-tray="refresh" class="w-full text-left px-3 py-1.5 hover:bg-sky-500/15">立即刷新额度</button>
+              <div class="my-1 border-t border-current/10"></div>
+              <button data-tray="trio" class="w-full text-left px-3 py-1.5 hover:bg-sky-500/15">返回桌面全景</button>
+            </div>
+          </div>
+          <div class="text-right leading-tight mono text-[11px] opacity-85">
+            <div>13:20</div>
+            <div class="text-[10px] opacity-75">2026/11/25</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      view: 'trio',
+      wallpaper: 'starry',
+      themeMode: 'System',
+      surfaceStyle: 'Themed',
+      textContrast: 'Auto', // Auto | Light | Dark
+      customBg: '#DFEAFC',
+      transparency: 65,
+      widgetMode: 'Bars',
+      showCountdown: true,
+      layerMode: 'DesktopPinned',
+      locked: false,
+      settingsTab: 'appearance',
+      previewWall: 'starry',
+      agExpanded: false,
+      grokConnected: true,
+      geminiStep: 2,
+      lowThreshold: 20,
+      criticalThreshold: 10,
+      buckets: [
+        { key: 'chatgpt.7d', service: 'ChatGPT', shortName: 'ChatGPT', pillTag: '', fullName: 'ChatGPT · 每周额度', remaining: 74, resetRel: '1d 12h', resetAbs: '11/27 01:20', visible: true },
+        { key: 'ag.gemini.7d', service: 'Antigravity', shortName: 'Gemini', pillTag: 'G', fullName: 'Antigravity · Gemini 周', remaining: 81, resetRel: '6d 0h', resetAbs: '12/01 13:20', visible: true },
+        { key: 'ag.claude.7d', service: 'Antigravity', shortName: 'Claude', pillTag: 'C', fullName: 'Antigravity · Claude 周', remaining: 100, resetRel: '待重置', resetAbs: '—', visible: true },
+        { key: 'grok.7d', service: 'Grok', shortName: 'Grok', pillTag: '', fullName: 'Grok · 共享周额度', remaining: 92, resetRel: '4d 20h', resetAbs: '11/30 09:20', visible: true }
+      ]
+    };
+
+    const TOKENS = {
+      Light: {
+        sidebarBg: '#F1F4F9', canvasBg: '#F8FAFC', cardBg: '#FFFFFF', trayBg: '#E9EEF5',
+        subtleBg: '#EBF0F7', border: '#E2E8F0', textPrimary: '#0F172A', textSecondary: '#475569', textMuted: '#64748B',
+        accent: '#0958D9', accentSoft: '#E6EDF7', plate: '#F5F8FD',
+        normalFill: 'linear-gradient(90deg,#1677FF,#0958D9)', normalText: '#0958D9', normalTrack: '#DCE7F7',
+        lowFill: '#D97706', lowText: '#B45309', lowTrack: '#FDE8CD',
+        critFill: '#DC2626', critText: '#B91C1C', critTrack: '#FADBD8'
+      },
+      Dark: {
+        sidebarBg: '#11151C', canvasBg: '#161B24', cardBg: '#1C222D', trayBg: '#111620',
+        subtleBg: '#262E3D', border: '#2A3342', textPrimary: '#F8FAFC', textSecondary: '#94A3B8', textMuted: '#64748B',
+        accent: '#4C9BFF', accentSoft: '#222B3B', plate: '#10151F',
+        normalFill: 'linear-gradient(90deg,#38BDF8,#3B82F6)', normalText: '#7DD3FC', normalTrack: 'rgba(255,255,255,0.16)',
+        lowFill: '#FBBF24', lowText: '#FCD34D', lowTrack: 'rgba(251,191,36,0.22)',
+        critFill: '#FB7185', critText: '#FDA4AF', critTrack: 'rgba(251,113,133,0.24)'
+      }
+    };
+
+    function resolvedTheme() {
+      if (state.themeMode === 'Light' || state.themeMode === 'Dark') return state.themeMode;
+      return (state.wallpaper === 'light' || state.wallpaper === 'white') ? 'Light' : 'Dark';
+    }
+
+    function hexToRgb(hex) {
+      const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return m ? { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) } : { r: 16, g: 21, b: 31 };
+    }
+
+    function computeWidgetSurface(wallOverride = null) {
+      const theme = resolvedTheme();
+      const t = TOKENS[theme];
+      const wall = wallOverride || state.wallpaper;
+      const alpha = (100 - state.transparency) / 100;
+      const effectiveAlpha = state.surfaceStyle === 'HudGlass' ? Math.min(0.28, alpha * 0.36) : alpha;
+
+      let useLightInk;
+      if (state.textContrast === 'Light') useLightInk = true;
+      else if (state.textContrast === 'Dark') useLightInk = false;
+      else {
+        if (state.transparency >= 45 || state.surfaceStyle === 'HudGlass') {
+          useLightInk = wall !== 'white' && wall !== 'light';
+        } else if (state.surfaceStyle === 'CustomColor') {
+          const c = hexToRgb(state.customBg);
+          useLightInk = (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b) < 128;
+        } else {
+          useLightInk = theme === 'Dark';
+        }
+      }
+
+      let baseHex = state.surfaceStyle === 'CustomColor' ? state.customBg : (useLightInk && state.transparency >= 45 ? '#10151F' : t.plate);
+      const rgb = hexToRgb(baseHex);
+      const fg = useLightInk ? TOKENS.Dark : TOKENS.Light;
+      const needShadow = state.transparency >= 40 || state.surfaceStyle === 'HudGlass';
+
+      return {
+        bgRgba: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${effectiveAlpha.toFixed(2)})`,
+        border: useLightInk ? `rgba(255,255,255,${(0.22 * Math.max(0.35, effectiveAlpha)).toFixed(2)})` : `rgba(15,23,42,${(0.12 * Math.max(0.3, effectiveAlpha)).toFixed(2)})`,
+        shadow: effectiveAlpha > 0.06 ? `0 12px 30px rgba(0,0,0,${(0.26 * effectiveAlpha).toFixed(2)})` : 'none',
+        textShadow: needShadow ? (useLightInk ? '0 1px 4px rgba(0,0,0,0.68)' : '0 1px 3px rgba(255,255,255,0.8)') : 'none',
+        blur: effectiveAlpha > 0.04 && effectiveAlpha < 0.98 ? 'blur(16px)' : 'none',
+        fg,
+        useLightInk
+      };
+    }
+
+    function healthColors(remaining, fg, useLightInk) {
+      if (remaining <= state.criticalThreshold) return { fill: fg.critFill, text: fg.critText, track: fg.critTrack, stroke: useLightInk ? '#FB7185' : '#DC2626', warn: true };
+      if (remaining < state.lowThreshold) return { fill: fg.lowFill, text: fg.lowText, track: fg.lowTrack, stroke: useLightInk ? '#FBBF24' : '#D97706', warn: true };
+      return { fill: fg.normalFill, text: useLightInk ? '#F8FAFC' : fg.normalText, track: useLightInk ? 'rgba(255,255,255,0.18)' : fg.normalTrack, stroke: useLightInk ? '#38BDF8' : '#1677FF', warn: false };
+    }
+
+    function serviceGlyph(service, color, size = 14) {
+      if (service === 'ChatGPT') return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 4v4M12 16v4M4 12h4M16 12h4"/></svg>`;
+      if (service === 'Antigravity') return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}"><path d="M12 3c-4 0-4.5 9-8 14 2 1.5 4.5-1.5 8-5 3.5 3.5 6 6.5 8 5-3.5-5-4-14-8-14z"/></svg>`;
+      if (service === 'Grok') return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="7.5"/><path d="M5 19L19 5"/></svg>`;
+      return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}"><path d="M12 2C13 9 15 11 22 12c-7 1-9 3-10 10-1-7-3-9-10-10 7-1 9-3 10-10z"/></svg>`;
+    }
+
+    function renderPureWidget(el, mode, wallOverride = null) {
+      const ws = computeWidgetSurface(wallOverride);
+      const fg = ws.fg;
+      const items = state.buckets;
+
+      let inner = '';
+      let frameClass = '';
+      if (mode === 'CompactPill') {
+        frameClass = 'rounded-full px-4 py-2 inline-flex items-center';
+        inner = `<div class="flex items-center gap-3">${items.map((b, i) => {
+          const hc = healthColors(b.remaining, fg, ws.useLightInk);
+          return `${i > 0 ? `<span class="w-px h-3.5" style="background:${ws.useLightInk ? 'rgba(255,255,255,0.2)' : 'rgba(15,23,42,0.16)'}"></span>` : ''}
+            <div class="flex items-center gap-1.5 text-xs">
+              ${serviceGlyph(b.service, fg.textPrimary, 13)}
+              ${b.pillTag ? `<span class="text-[9.5px] font-semibold opacity-75" style="color:${fg.textPrimary}">${b.pillTag}</span>` : ''}
+              <span class="mono font-semibold" style="color:${hc.text}">${b.remaining}%</span>
+            </div>`;
+        }).join('')}</div>`;
+      } else if (mode === 'Rings') {
+        frameClass = 'rounded-[14px] p-3.5 w-[216px]';
+        inner = `<div class="grid grid-cols-2 gap-3">${items.map(b => {
+          const hc = healthColors(b.remaining, fg, ws.useLightInk);
+          const r = 24, c = 2 * Math.PI * r, off = c * (1 - b.remaining / 100);
+          return `<div class="flex flex-col items-center">
+            <div class="relative w-14 h-14 flex items-center justify-center">
+              <svg class="w-14 h-14 -rotate-90" viewBox="0 0 60 60">
+                <circle cx="30" cy="30" r="${r}" fill="none" stroke="${hc.track}" stroke-width="4.5" />
+                <circle cx="30" cy="30" r="${r}" fill="none" stroke="${hc.stroke}" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" />
+              </svg>
+              <span class="absolute mono text-xs font-semibold" style="color:${fg.textPrimary}">${b.remaining}%</span>
+            </div>
+            <div class="text-[11px] font-medium mt-1 truncate" style="color:${fg.textPrimary}">${b.shortName}</div>
+          </div>`;
+        }).join('')}</div>
+        <div class="mt-2 text-right text-[10px] mono opacity-75" style="color:${fg.textSecondary}">13:20</div>`;
+      } else {
+        frameClass = 'rounded-[14px] px-3.5 py-3 w-[252px]';
+        inner = `<div class="space-y-2.5">${items.map(b => {
+          const hc = healthColors(b.remaining, fg, ws.useLightInk);
+          return `<div>
+            <div class="flex items-center justify-between gap-2 text-xs">
+              <div class="flex items-center gap-1.5 min-w-0">
+                ${serviceGlyph(b.service, fg.textPrimary, 13)}
+                <span class="font-semibold truncate" style="color:${fg.textPrimary}">${b.shortName}</span>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                ${state.showCountdown ? `<span class="mono text-[10.5px] opacity-80" style="color:${fg.textSecondary}">${b.resetRel}</span>` : ''}
+                <span class="mono text-[13px] font-semibold" style="color:${hc.text}">${b.remaining}%</span>
+                ${hc.warn ? `<span class="text-[11px]" style="color:${hc.text}">⚠</span>` : ''}
+              </div>
+            </div>
+            <div class="h-1 rounded-full overflow-hidden mt-1.5" style="background:${hc.track}">
+              <div class="h-full rounded-full transition-all duration-200" style="width:${b.remaining}%;background:${hc.fill}"></div>
+            </div>
+          </div>`;
+        }).join('')}</div>
+        <div class="mt-2.5 text-right text-[10px] mono opacity-75" style="color:${fg.textSecondary}">检查于 13:20</div>`;
+      }
+
+      el.className = `border transition-all duration-200 select-none ${frameClass}`;
+      el.style.background = ws.bgRgba;
+      el.style.borderColor = ws.border;
+      el.style.boxShadow = ws.shadow;
+      el.style.backdropFilter = ws.blur;
+      el.style.textShadow = ws.textShadow;
+      el.innerHTML = inner;
+    }
+
+    function renderSettings() {
+      const theme = resolvedTheme();
+      const t = TOKENS[theme];
+      const win = document.getElementById('settingsWindow');
+      win.style.background = t.canvasBg;
+      win.style.borderColor = t.border;
+      win.style.color = t.textPrimary;
+
+      const navItems = [
+        { id: 'appearance', label: '外观与桌面', icon: '🖥' },
+        { id: 'services', label: '服务与显示项', icon: '🔌' },
+        { id: 'alerts', label: '提醒与通知', icon: '🔔' },
+        { id: 'general', label: '常规与诊断', icon: '⚙' }
+      ];
+
+      const segControl = (attr, options, current) => `
+        <div class="inline-flex rounded-lg p-[3px] gap-0.5" style="background:${t.trayBg}">
+          ${options.map(([v, lbl]) => {
+            const act = current === v;
+            return `<button ${attr}="${v}" class="px-3 py-1 rounded-[6px] text-[11.5px] font-medium transition" style="background:${act ? (theme === 'Dark' ? '#273142' : '#FFFFFF') : 'transparent'};color:${act ? t.textPrimary : t.textSecondary};box-shadow:${act ? '0 1px 2px rgba(0,0,0,0.12)' : 'none'}">${lbl}</button>`;
+          }).join('')}
+        </div>`;
+
+      let rightContent = '';
+      if (state.settingsTab === 'appearance') {
+        rightContent = `
+          <div class="space-y-3.5">
+            <!-- Single-frame immersive preview -->
+            <div class="relative h-[156px] rounded-xl overflow-hidden flex items-center justify-center border ${state.previewWall === 'starry' ? 'starry-bg' : ''}" style="border-color:${t.border};${state.previewWall === 'light' ? 'background:linear-gradient(135deg,#dbeafe,#eff6ff)' : ''}">
+              <button id="togglePreviewWall" class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[10.5px] font-medium backdrop-blur-md border" style="background:rgba(15,23,42,0.45);border-color:rgba(255,255,255,0.2);color:#F8FAFC">${state.previewWall === 'starry' ? '切换浅壁纸' : '切换深壁纸'}</button>
+              <div class="scale-[0.82]" id="settingsPreviewWidget"></div>
+            </div>
+
+            <!-- Fluent 2 Card with hairline dividers -->
+            <div class="rounded-xl border px-4 divide-y text-xs" style="background:${t.cardBg};border-color:${t.border}">
+              <div class="h-11 flex items-center justify-between" style="border-color:${t.border}">
+                <span class="font-medium">主题模式</span>
+                ${segControl('data-set-theme', [['System','跟随系统'],['Light','浅色'],['Dark','深色']], state.themeMode)}
+              </div>
+              <div class="h-11 flex items-center justify-between" style="border-color:${t.border}">
+                <span class="font-medium">显示方式</span>
+                ${segControl('data-set-mode', [['Bars','进度条'],['Rings','圆环'],['CompactPill','迷你胶囊']], state.widgetMode)}
+              </div>
+              <div class="h-11 flex items-center justify-between" style="border-color:${t.border}">
+                <span class="font-medium">背景材质</span>
+                ${segControl('data-set-surface', [['Themed','主题默认'],['HudGlass','无界通透'],['CustomColor','自定义色']], state.surfaceStyle)}
+              </div>
+              <div class="h-11 flex items-center justify-between" style="border-color:${t.border}">
+                <span class="font-medium">高透明文字</span>
+                ${segControl('data-set-ink', [['Auto','自动'],['Light','亮白'],['Dark','深墨']], state.textContrast)}
+              </div>
+              <div class="h-11 flex items-center justify-between gap-4" style="border-color:${t.border}">
+                <span class="font-medium">背景透明度</span>
+                <div class="flex items-center gap-2.5 flex-1 max-w-[230px]">
+                  <input id="settingsAlphaRange" type="range" min="0" max="100" value="${state.transparency}" class="flex-1 accent-[#4C9BFF]" />
+                  <span class="mono w-9 text-right" style="color:${t.textSecondary}">${state.transparency}%</span>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      } else if (state.settingsTab === 'services') {
+        rightContent = `
+          <div class="space-y-3 text-xs">
+            <div class="rounded-xl border p-3.5 space-y-2" style="background:${t.cardBg};border-color:${t.border}">
+              <div class="font-semibold mb-1">桌面显示项（与托盘控制中心同步）</div>
+              ${state.buckets.map(b => `
+                <div class="h-9 px-2.5 rounded-lg flex items-center justify-between" style="background:${t.canvasBg}">
+                  <span>${b.fullName}</span>
+                  <span class="mono font-semibold" style="color:${t.accent}">${b.remaining}%</span>
+                </div>`).join('')}
+            </div>
+          </div>`;
+      } else if (state.settingsTab === 'alerts') {
+        rightContent = `
+          <div class="rounded-xl border px-4 divide-y text-xs" style="background:${t.cardBg};border-color:${t.border}">
+            <div class="h-12 flex items-center justify-between" style="border-color:${t.border}"><span>低额度提醒（全部 4 平台）</span><span class="mono" style="color:${t.textSecondary}">&lt; 20%</span></div>
+            <div class="h-12 flex items-center justify-between" style="border-color:${t.border}"><span>消耗过快提醒</span><span class="mono" style="color:${t.textSecondary}">15m ≥ 15%</span></div>
+            <div class="h-12 flex items-center justify-between" style="border-color:${t.border}"><span>周期重置恢复提醒</span><span style="color:${t.accent}">已启用</span></div>
+          </div>`;
+      } else {
+        rightContent = `
+          <div class="rounded-xl border p-4 text-xs space-y-2" style="background:${t.cardBg};border-color:${t.border}">
+            <div class="font-semibold">运行诊断摘要</div>
+            <pre class="mono text-[11px] p-3 rounded-lg" style="background:${t.canvasBg};color:${t.textSecondary}">QuotaMonitor v5 · Fluent 2 Polish
+Theme=${theme} (${state.themeMode}) · Transparency=${state.transparency}%
+TextContrast=${state.textContrast} · No Widget Hover Toolbar</pre>
+          </div>`;
+      }
+
+      win.innerHTML = `
+        <div class="flex flex-1 min-h-0">
+          <!-- Left Sidebar -->
+          <div class="w-[172px] border-r flex flex-col shrink-0" style="background:${t.sidebarBg};border-color:${t.border}">
+            <div class="h-11 px-4 flex items-center gap-2 font-semibold text-[13px]">
+              <span style="color:${t.accent}">◎</span><span>额度监控器</span>
+            </div>
+            <div class="px-2.5 py-2 space-y-1">
+              ${navItems.map(n => {
+                const act = state.settingsTab === n.id;
+                return `<button data-nav-tab="${n.id}" class="relative w-full h-9 px-3 rounded-lg text-xs font-medium flex items-center gap-2.5 transition" style="background:${act ? t.accentSoft : 'transparent'};color:${act ? t.textPrimary : t.textSecondary}">
+                  ${act ? `<span class="absolute left-0 top-2.5 bottom-2.5 w-[3px] rounded-full" style="background:${t.accent}"></span>` : ''}
+                  <span>${n.icon}</span><span>${n.label}</span>
+                </button>`;
+              }).join('')}
+            </div>
+          </div>
+          <!-- Right Canvas -->
+          <div class="flex-1 flex flex-col min-w-0">
+            <div class="h-11 px-5 flex items-center justify-between shrink-0">
+              <span class="text-sm font-semibold">${navItems.find(x => x.id === state.settingsTab).label}</span>
+              <button id="closeSettingsView" class="w-7 h-7 rounded-md flex items-center justify-center text-xs hover:opacity-70" style="color:${t.textSecondary}">✕</button>
+            </div>
+            <div class="flex-1 px-5 pb-5 overflow-y-auto glass-scroll">${rightContent}</div>
+          </div>
+        </div>`;
+
+      if (state.settingsTab === 'appearance') {
+        renderPureWidget(document.getElementById('settingsPreviewWidget'), state.widgetMode, state.previewWall);
+      }
+    }
+
+    function renderPopoverAndWizard() {
+      const t = TOKENS[resolvedTheme()];
+      const pop = document.getElementById('dashboardPopover');
+      pop.style.background = t.canvasBg;
+      pop.style.borderColor = t.border;
+      pop.style.color = t.textPrimary;
+      pop.innerHTML = `
+        <div class="px-4 py-3 border-b flex items-center justify-between" style="border-color:${t.border}">
+          <span class="font-semibold text-[13px]">额度控制中心</span>
+          <div class="flex items-center gap-1.5 text-xs">
+            <button id="popOpenSettings" class="px-2 py-1 rounded-md" style="background:${t.subtleBg};color:${t.textSecondary}">设置</button>
+          </div>
+        </div>
+        <div class="p-3 space-y-2.5 overflow-y-auto flex-1">
+          ${state.buckets.map(b => {
+            const hc = healthColors(b.remaining, t, resolvedTheme() === 'Dark');
+            return `<div class="rounded-xl border p-3 space-y-1.5" style="background:${t.cardBg};border-color:${t.border}">
+              <div class="flex justify-between text-xs font-semibold"><span>${b.fullName}</span><span class="mono" style="color:${hc.text}">${b.remaining}%</span></div>
+              <div class="h-1.5 rounded-full overflow-hidden" style="background:${hc.track}"><div class="h-full rounded-full" style="width:${b.remaining}%;background:${hc.fill}"></div></div>
+              <div class="text-[10.5px] mono" style="color:${t.textMuted}">${b.resetRel} · ${b.resetAbs}</div>
+            </div>`;
+          }).join('')}
+        </div>`;
+
+      const wiz = document.getElementById('geminiWizardCard');
+      wiz.style.background = t.canvasBg;
+      wiz.style.borderColor = t.border;
+      wiz.style.color = t.textPrimary;
+      wiz.innerHTML = `
+        <div class="font-semibold text-sm">Gemini 网页版 · 3 步连接向导</div>
+        <div class="text-xs" style="color:${t.textSecondary}">1. 注册并复制目录 → 2. Chrome 授权 → 3. 实时握手</div>
+        <div class="rounded-lg p-3 text-xs" style="background:${t.cardBg};border:1px solid ${t.border}">当前状态：等待 Chrome 扩展授权…</div>`;
+    }
+
+    function renderTaskbar() {
+      const darkBar = state.wallpaper !== 'light' && state.wallpaper !== 'white';
+      const bar = document.getElementById('simTaskbar');
+      bar.style.background = darkBar ? 'rgba(15,23,42,0.82)' : 'rgba(248,250,252,0.88)';
+      bar.style.borderColor = darkBar ? 'rgba(255,255,255,0.12)' : 'rgba(15,23,42,0.08)';
+      bar.style.color = darkBar ? '#F8FAFC' : '#0F172A';
+
+      const minVal = Math.min(...state.buckets.map(b => b.remaining));
+      const angle = -135 + (minVal / 100) * 270;
+      const dotColor = minVal <= state.criticalThreshold ? '#EF4444' : minVal < state.lowThreshold ? '#F59E0B' : null;
+      const ink = darkBar ? '#F8FAFC' : '#1E293B';
+
+      document.getElementById('trayIconBtn').innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9" fill="none" stroke="${ink}" stroke-width="2"/>
+          <g transform="rotate(${angle.toFixed(1)} 12 12)">
+            <line x1="12" y1="12" x2="12" y2="5.5" stroke="${ink}" stroke-width="2" stroke-linecap="round"/>
+          </g>
+          <circle cx="12" cy="12" r="1.7" fill="${ink}"/>
+          ${dotColor ? `<circle cx="19" cy="19" r="3.6" fill="${dotColor}" stroke="${darkBar ? '#0F172A' : '#F8FAFC'}" stroke-width="1.2"/>` : ''}
+        </svg>`;
+
+      const menu = document.getElementById('trayMenuPopup');
+      const t = TOKENS[resolvedTheme()];
+      menu.style.background = t.cardBg;
+      menu.style.borderColor = t.border;
+      menu.style.color = t.textPrimary;
+    }
+
+    function renderAll() {
+      const stage = document.getElementById('stageRoot');
+      stage.className = `relative rounded-2xl overflow-hidden border border-[var(--border)] shadow-lg min-h-[600px] flex flex-col justify-between transition-all duration-300 ${state.wallpaper === 'starry' ? 'starry-bg' : ''}`;
+      if (state.wallpaper === 'dark') stage.style.background = 'radial-gradient(circle at 20% 25%, #1d4ed8 0%, #0f172a 55%, #090d16 100%)';
+      else if (state.wallpaper === 'light') stage.style.background = 'radial-gradient(circle at 25% 20%, #dbeafe 0%, #bfdbfe 45%, #e2e8f0 100%)';
+      else if (state.wallpaper === 'white') stage.style.background = '#FFFFFF';
+      else stage.style.background = '';
+
+      document.querySelectorAll('#viewTabs button').forEach(btn => {
+        const act = btn.dataset.view === state.view;
+        btn.style.background = act ? 'var(--primary)' : 'transparent';
+        btn.style.color = act ? 'var(--primary-foreground)' : 'var(--muted-foreground)';
+      });
+
+      document.getElementById('viewTrio').classList.toggle('hidden', state.view !== 'trio');
+      document.getElementById('viewSettings').classList.toggle('hidden', state.view !== 'settings');
+      document.getElementById('viewSettings').classList.toggle('flex', state.view === 'settings');
+      document.getElementById('viewPopover').classList.toggle('hidden', state.view !== 'popover');
+      document.getElementById('viewPopover').classList.toggle('flex', state.view === 'popover');
+
+      renderPureWidget(document.getElementById('widgetBarsSlot'), 'Bars');
+      renderPureWidget(document.getElementById('widgetRingsSlot'), 'Rings');
+      renderPureWidget(document.getElementById('widgetPillSlot'), 'CompactPill');
+      renderSettings();
+      renderPopoverAndWizard();
+      renderTaskbar();
+    }
+
+    document.getElementById('viewTabs').addEventListener('click', e => {
+      const btn = e.target.closest('button[data-view]');
+      if (btn) { state.view = btn.dataset.view; renderAll(); }
+    });
+    document.getElementById('wallpaperSelect').addEventListener('change', e => { state.wallpaper = e.target.value; renderAll(); });
+    document.getElementById('themeSelect').addEventListener('change', e => { state.themeMode = e.target.value; renderAll(); });
+    document.getElementById('simSurface').addEventListener('change', e => { state.surfaceStyle = e.target.value; renderAll(); });
+    document.getElementById('simInk').addEventListener('change', e => { state.textContrast = e.target.value; renderAll(); });
+    document.getElementById('simAlpha').addEventListener('input', e => {
+      state.transparency = Number(e.target.value);
+      document.getElementById('simAlphaVal').textContent = state.transparency + '%';
+      renderAll();
+    });
+    document.getElementById('simClaude').addEventListener('input', e => {
+      const v = Number(e.target.value);
+      state.buckets.find(b => b.key === 'ag.claude.7d').remaining = v;
+      document.getElementById('simClaudeVal').textContent = v + '%';
+      renderAll();
+    });
+
+    document.getElementById('trayIconBtn').addEventListener('click', e => {
+      e.stopPropagation();
+      document.getElementById('trayMenuPopup').classList.toggle('hidden');
+    });
+    document.addEventListener('click', () => document.getElementById('trayMenuPopup').classList.add('hidden'));
+    document.getElementById('trayMenuPopup').addEventListener('click', e => {
+      const act = e.target.closest('button[data-tray]')?.dataset.tray;
+      if (!act) return;
+      if (act === 'settings') state.view = 'settings';
+      if (act === 'popover') state.view = 'popover';
+      if (act === 'trio') state.view = 'trio';
+      document.getElementById('trayMenuPopup').classList.add('hidden');
+      renderAll();
+    });
+
+    document.getElementById('settingsWindow').addEventListener('click', e => {
+      const nav = e.target.closest('button[data-nav-tab]');
+      if (nav) { state.settingsTab = nav.dataset.navTab; renderAll(); return; }
+      const tm = e.target.closest('button[data-set-theme]');
+      if (tm) { state.themeMode = tm.dataset.setTheme; document.getElementById('themeSelect').value = state.themeMode; renderAll(); return; }
+      const md = e.target.closest('button[data-set-mode]');
+      if (md) { state.widgetMode = md.dataset.setMode; renderAll(); return; }
+      const sf = e.target.closest('button[data-set-surface]');
+      if (sf) { state.surfaceStyle = sf.dataset.setSurface; document.getElementById('simSurface').value = state.surfaceStyle; renderAll(); return; }
+      const ik = e.target.closest('button[data-set-ink]');
+      if (ik) { state.textContrast = ik.dataset.setInk; document.getElementById('simInk').value = state.textContrast; renderAll(); return; }
+      if (e.target.closest('#togglePreviewWall')) { state.previewWall = state.previewWall === 'starry' ? 'light' : 'starry'; renderAll(); return; }
+      if (e.target.closest('#closeSettingsView')) { state.view = 'trio'; renderAll(); }
+    });
+    document.getElementById('settingsWindow').addEventListener('input', e => {
+      if (e.target.id === 'settingsAlphaRange') {
+        state.transparency = Number(e.target.value);
+        document.getElementById('simAlpha').value = state.transparency;
+        document.getElementById('simAlphaVal').textContent = state.transparency + '%';
+        renderAll();
+      }
+    });
+    document.getElementById('dashboardPopover').addEventListener('click', e => {
+      if (e.target.closest('#popOpenSettings')) { state.view = 'settings'; renderAll(); }
+    });
+
+    renderAll();
+  </script>
+</body>
+</html>

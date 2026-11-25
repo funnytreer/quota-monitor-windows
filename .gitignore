@@ -1,0 +1,22 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+TestResults/
+*.log
+
+# 本机实测记录、运行数据和登录资料
+/docs/验收/
+GrokWebView/
+*.WebView2/
+settings.json
+history.json
+auth.json
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.key
+*.pem
