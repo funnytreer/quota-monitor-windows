@@ -1,0 +1,471 @@
+// !$*UTF8*$!
+{
+	archiveVersion = "1";
+	classes = {
+	};
+	objectVersion = "56";
+	objects = {
+		000000000000000000000083 = { isa = "PBXFileReference"; path = "AntigravityClient.swift"; sourceTree = "<group>"; lastKnownFileType = "sourcecode.swift"; };
+		000000000000000000000084 = { isa = "PBXBuildFile"; fileRef = "000000000000000000000083"; };
+
+		000000000000000000000081 = { isa = "PBXFileReference"; path = "AntigravityUsage.swift"; sourceTree = "<group>"; lastKnownFileType = "sourcecode.swift"; };
+		000000000000000000000082 = { isa = "PBXBuildFile"; fileRef = "000000000000000000000081"; };
+
+		00000000000000000000008A = { isa = "PBXFileReference"; path = "Identity.xcassets"; sourceTree = "<group>"; lastKnownFileType = "folder.assetcatalog"; };
+		00000000000000000000008B = { isa = "PBXBuildFile"; fileRef = "00000000000000000000008A"; };
+		000000000000000000000087 = { isa = "PBXFileReference"; path = "LobeIcons-LICENSE.txt"; sourceTree = "<group>"; lastKnownFileType = "text"; };
+		000000000000000000000088 = { isa = "PBXBuildFile"; fileRef = "000000000000000000000087"; };
+		000000000000000000000089 = { isa = "PBXBuildFile"; fileRef = "000000000000000000000087"; };
+		000000000000000000000072 = {
+			isa = "PBXFileReference";
+			path = "ServiceIcons.xcassets";
+			sourceTree = "<group>";
+			lastKnownFileType = "folder.assetcatalog";
+		};
+		000000000000000000000073 = {
+			isa = "PBXBuildFile";
+			fileRef = "000000000000000000000072";
+		};
+		000000000000000000000085 = { isa = "PBXBuildFile"; fileRef = "000000000000000000000072"; };
+		000000000000000000000086 = {
+			isa = "PBXResourcesBuildPhase";
+			buildActionMask = "2147483647";
+			files = ("000000000000000000000085", "000000000000000000000089");
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+		000000000000000000000074 = {
+			isa = "PBXResourcesBuildPhase";
+			buildActionMask = "2147483647";
+			files = ("000000000000000000000073", "000000000000000000000088", "00000000000000000000008B");
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+		000000000000000000000069 = {
+			isa = "PBXFileReference";
+			path = "ServiceIcon.swift";
+			sourceTree = "<group>";
+			lastKnownFileType = "sourcecode.swift";
+		};
+		00000000000000000000006A = {
+			isa = "PBXBuildFile";
+			fileRef = "000000000000000000000069";
+		};
+		00000000000000000000006B = {
+			isa = "PBXBuildFile";
+			fileRef = "000000000000000000000069";
+		};
+		000000000000000000000065 = {
+			isa = "PBXFileReference";
+			path = "GrokWebClient.swift";
+			sourceTree = "<group>";
+			lastKnownFileType = "sourcecode.swift";
+		};
+		000000000000000000000066 = {
+			isa = "PBXFileReference";
+			path = "GrokUsage.swift";
+			sourceTree = "<group>";
+			lastKnownFileType = "sourcecode.swift";
+		};
+		000000000000000000000067 = {
+			isa = "PBXBuildFile";
+			fileRef = "000000000000000000000065";
+		};
+		000000000000000000000068 = {
+			isa = "PBXBuildFile";
+			fileRef = "000000000000000000000066";
+		};
+		000000000000000000000001 = {
+			isa = "PBXFileReference";
+			path = "Quota.swift";
+			sourceTree = "<group>";
+			lastKnownFileType = "sourcecode.swift";
+		};
+		000000000000000000000002 = {
+			isa = "PBXFileReference";
+			path = "CodexProtocol.swift";
+			sourceTree = "<group>";
+			lastKnownFileType = "sourcecode.swift";
+		};
+		000000000000000000000003 = {
+			isa = "PBXFileReference";
+			path = "CodexClient.swift";
+			sourceTree = "<group>";
+			lastKnownFileType = "sourcecode.swift";
+		};
+		000000000000000000000004 = {
+			isa = "PBXFileReference";
+			path = "QuotaStore.swift";
+			sourceTree = "<group>";
+			lastKnownFileType = "sourcecode.swift";
+		};
+		000000000000000000000005 = {
+			isa = "PBXFileReference";
+			path = "QuotaMonitorApp.swift";
+			sourceTree = "<group>";
+			lastKnownFileType = "sourcecode.swift";
+		};
+		000000000000000000000006 = {
+			isa = "PBXFileReference";
+			path = "DashboardView.swift";
+			sourceTree = "<group>";
+			lastKnownFileType = "sourcecode.swift";
+		};
+		000000000000000000000007 = {
+			isa = "PBXFileReference";
+			path = "QuotaWidget.swift";
+			sourceTree = "<group>";
+			lastKnownFileType = "sourcecode.swift";
+		};
+		000000000000000000000008 = {
+			isa = "PBXFileReference";
+			path = "Info.plist";
+			sourceTree = "<group>";
+			lastKnownFileType = "text.plist.xml";
+		};
+		000000000000000000000009 = {
+			isa = "PBXFileReference";
+			path = "QuotaMonitor.entitlements";
+			sourceTree = "<group>";
+			lastKnownFileType = "text.plist.entitlements";
+		};
+		00000000000000000000000A = {
+			isa = "PBXGroup";
+			path = "App";
+			children = (
+				"000000000000000000000072",
+				"000000000000000000000087",
+				"00000000000000000000008A",
+				"000000000000000000000069",
+				"000000000000000000000065",
+				"000000000000000000000083",
+				"000000000000000000000003",
+				"000000000000000000000004",
+				"000000000000000000000005",
+				"000000000000000000000006",
+				"000000000000000000000008",
+				"000000000000000000000009",
+			);
+			sourceTree = "<group>";
+		};
+		00000000000000000000000B = {
+			isa = "PBXFileReference";
+			path = "Info.plist";
+			sourceTree = "<group>";
+			lastKnownFileType = "text.plist.xml";
+		};
+		00000000000000000000000C = {
+			isa = "PBXFileReference";
+			path = "QuotaWidget.entitlements";
+			sourceTree = "<group>";
+			lastKnownFileType = "text.plist.entitlements";
+		};
+		00000000000000000000000D = {
+			isa = "PBXGroup";
+			path = "Widget";
+			children = (
+				"000000000000000000000007",
+				"00000000000000000000000B",
+				"00000000000000000000000C",
+			);
+			sourceTree = "<group>";
+		};
+		00000000000000000000000E = {
+			isa = "PBXGroup";
+			path = "Sources/QuotaCore";
+			children = (
+				"000000000000000000000066",
+				"000000000000000000000081",
+				"000000000000000000000001",
+				"000000000000000000000002",
+			);
+			sourceTree = "<group>";
+		};
+		00000000000000000000000F = {
+			isa = "PBXFileReference";
+			path = "QuotaMonitor.app";
+			sourceTree = "BUILT_PRODUCTS_DIR";
+			explicitFileType = "wrapper.application";
+			includeInIndex = "0";
+		};
+		000000000000000000000010 = {
+			isa = "PBXFileReference";
+			path = "QuotaWidget.appex";
+			sourceTree = "BUILT_PRODUCTS_DIR";
+			explicitFileType = "wrapper.app-extension";
+			includeInIndex = "0";
+		};
+		000000000000000000000011 = {
+			isa = "PBXGroup";
+			name = "Products";
+			children = (
+				"00000000000000000000000F",
+				"000000000000000000000010",
+			);
+			sourceTree = "<group>";
+		};
+		000000000000000000000012 = {
+			isa = "PBXGroup";
+			children = (
+				"00000000000000000000000A",
+				"00000000000000000000000D",
+				"00000000000000000000000E",
+				"000000000000000000000011",
+			);
+			sourceTree = "<group>";
+		};
+		000000000000000000000013 = {
+			isa = "XCBuildConfiguration";
+			name = "Debug";
+			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = "14.0";
+				SDKROOT = "macosx";
+				SWIFT_VERSION = "5.0";
+				QUOTA_APP_GROUP = "group.org.quotamonitor.macos";
+				CLANG_ENABLE_MODULES = "YES";
+				CODE_SIGN_STYLE = "Automatic";
+				REGISTER_APP_GROUPS = "NO";
+				SWIFT_EMIT_LOC_STRINGS = "NO";
+				ENABLE_USER_SCRIPT_SANDBOXING = "YES";
+			};
+		};
+		000000000000000000000014 = {
+			isa = "XCBuildConfiguration";
+			name = "Release";
+			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = "14.0";
+				SDKROOT = "macosx";
+				SWIFT_VERSION = "5.0";
+				QUOTA_APP_GROUP = "group.org.quotamonitor.macos";
+				CLANG_ENABLE_MODULES = "YES";
+				CODE_SIGN_STYLE = "Automatic";
+				REGISTER_APP_GROUPS = "NO";
+				SWIFT_EMIT_LOC_STRINGS = "NO";
+				ENABLE_USER_SCRIPT_SANDBOXING = "YES";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+		};
+		000000000000000000000015 = {
+			isa = "XCConfigurationList";
+			buildConfigurations = (
+				"000000000000000000000013",
+				"000000000000000000000014",
+			);
+			defaultConfigurationIsVisible = "0";
+			defaultConfigurationName = "Release";
+		};
+		000000000000000000000016 = {
+			isa = "PBXProject";
+			mainGroup = "000000000000000000000012";
+			productRefGroup = "000000000000000000000011";
+			projectDirPath = "";
+			projectRoot = "";
+			knownRegions = (
+				"en",
+				"Base",
+				"zh-Hans",
+			);
+			developmentRegion = "zh-Hans";
+			compatibilityVersion = "Xcode 14.0";
+			attributes = {
+				LastUpgradeCheck = "2720";
+			};
+			buildConfigurationList = "000000000000000000000015";
+			targets = (
+				"00000000000000000000002C",
+				"00000000000000000000001D",
+			);
+		};
+		000000000000000000000017 = {
+			isa = "PBXBuildFile";
+			fileRef = "000000000000000000000007";
+		};
+		000000000000000000000018 = {
+			isa = "PBXBuildFile";
+			fileRef = "000000000000000000000001";
+		};
+		000000000000000000000019 = {
+			isa = "PBXSourcesBuildPhase";
+			buildActionMask = "2147483647";
+			files = (
+				"000000000000000000000017",
+				"000000000000000000000018",
+				"00000000000000000000006B",
+			);
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+		00000000000000000000001A = {
+			isa = "XCBuildConfiguration";
+			name = "Debug";
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = "org.quotamonitor.macos.widget";
+				PRODUCT_NAME = "QuotaWidget";
+				INFOPLIST_FILE = "Widget/Info.plist";
+				CODE_SIGN_ENTITLEMENTS = "Widget/QuotaWidget.entitlements";
+				APPLICATION_EXTENSION_API_ONLY = "YES";
+				SKIP_INSTALL = "YES";
+			};
+		};
+		00000000000000000000001B = {
+			isa = "XCBuildConfiguration";
+			name = "Release";
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = "org.quotamonitor.macos.widget";
+				PRODUCT_NAME = "QuotaWidget";
+				INFOPLIST_FILE = "Widget/Info.plist";
+				CODE_SIGN_ENTITLEMENTS = "Widget/QuotaWidget.entitlements";
+				APPLICATION_EXTENSION_API_ONLY = "YES";
+				SKIP_INSTALL = "YES";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+		};
+		00000000000000000000001C = {
+			isa = "XCConfigurationList";
+			buildConfigurations = (
+				"00000000000000000000001A",
+				"00000000000000000000001B",
+			);
+			defaultConfigurationIsVisible = "0";
+			defaultConfigurationName = "Release";
+		};
+		00000000000000000000001D = {
+			isa = "PBXNativeTarget";
+			name = "QuotaWidget";
+			productName = "QuotaWidget";
+			productType = "com.apple.product-type.app-extension";
+			productReference = "000000000000000000000010";
+			buildConfigurationList = "00000000000000000000001C";
+			buildPhases = (
+				"000000000000000000000019",
+				"000000000000000000000086",
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+		};
+		00000000000000000000001E = {
+			isa = "PBXContainerItemProxy";
+			containerPortal = "000000000000000000000016";
+			proxyType = "1";
+			remoteGlobalIDString = "00000000000000000000001D";
+			remoteInfo = "QuotaWidget";
+		};
+		00000000000000000000001F = {
+			isa = "PBXTargetDependency";
+			target = "00000000000000000000001D";
+			targetProxy = "00000000000000000000001E";
+		};
+		000000000000000000000020 = {
+			isa = "PBXBuildFile";
+			fileRef = "000000000000000000000010";
+			settings = {
+				ATTRIBUTES = (
+					"RemoveHeadersOnCopy",
+				);
+			};
+		};
+		000000000000000000000021 = {
+			isa = "PBXCopyFilesBuildPhase";
+			name = "Embed App Extensions";
+			buildActionMask = "2147483647";
+			dstPath = "";
+			dstSubfolderSpec = "13";
+			files = (
+				"000000000000000000000020",
+			);
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+		000000000000000000000022 = {
+			isa = "PBXBuildFile";
+			fileRef = "000000000000000000000003";
+		};
+		000000000000000000000023 = {
+			isa = "PBXBuildFile";
+			fileRef = "000000000000000000000004";
+		};
+		000000000000000000000024 = {
+			isa = "PBXBuildFile";
+			fileRef = "000000000000000000000005";
+		};
+		000000000000000000000025 = {
+			isa = "PBXBuildFile";
+			fileRef = "000000000000000000000006";
+		};
+		000000000000000000000026 = {
+			isa = "PBXBuildFile";
+			fileRef = "000000000000000000000001";
+		};
+		000000000000000000000027 = {
+			isa = "PBXBuildFile";
+			fileRef = "000000000000000000000002";
+		};
+		000000000000000000000028 = {
+			isa = "PBXSourcesBuildPhase";
+			buildActionMask = "2147483647";
+			files = (
+				"000000000000000000000067",
+				"000000000000000000000084",
+				"000000000000000000000068",
+				"000000000000000000000082",
+				"00000000000000000000006A",
+				"000000000000000000000022",
+				"000000000000000000000023",
+				"000000000000000000000024",
+				"000000000000000000000025",
+				"000000000000000000000026",
+				"000000000000000000000027",
+			);
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+		000000000000000000000029 = {
+			isa = "XCBuildConfiguration";
+			name = "Debug";
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = "org.quotamonitor.macos";
+				PRODUCT_NAME = "QuotaMonitor";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon";
+				INFOPLIST_FILE = "App/Info.plist";
+				CODE_SIGN_ENTITLEMENTS = "App/QuotaMonitor.entitlements";
+			};
+		};
+		00000000000000000000002A = {
+			isa = "XCBuildConfiguration";
+			name = "Release";
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = "org.quotamonitor.macos";
+				PRODUCT_NAME = "QuotaMonitor";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon";
+				INFOPLIST_FILE = "App/Info.plist";
+				CODE_SIGN_ENTITLEMENTS = "App/QuotaMonitor.entitlements";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+		};
+		00000000000000000000002B = {
+			isa = "XCConfigurationList";
+			buildConfigurations = (
+				"000000000000000000000029",
+				"00000000000000000000002A",
+			);
+			defaultConfigurationIsVisible = "0";
+			defaultConfigurationName = "Release";
+		};
+		00000000000000000000002C = {
+			isa = "PBXNativeTarget";
+			name = "QuotaMonitor";
+			productName = "QuotaMonitor";
+			productType = "com.apple.product-type.application";
+			productReference = "00000000000000000000000F";
+			buildConfigurationList = "00000000000000000000002B";
+			buildPhases = (
+				"000000000000000000000028",
+				"000000000000000000000074",
+				"000000000000000000000021",
+			);
+			buildRules = (
+			);
+			dependencies = (
+				"00000000000000000000001F",
+			);
+		};
+	};
+	rootObject = "000000000000000000000016";
+}

@@ -15,7 +15,7 @@
     <AssemblyTitle>额度监控器</AssemblyTitle>
     <Product>额度监控器</Product>
     <Nullable>enable</Nullable>
-    <DefaultItemExcludes>$(DefaultItemExcludes);QuotaMonitor.Tests/**</DefaultItemExcludes>
+    <DefaultItemExcludes>$(DefaultItemExcludes);QuotaMonitor.Tests/**;macos/**</DefaultItemExcludes>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="QuotaMonitor.Tests" />
